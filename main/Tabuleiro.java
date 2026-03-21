@@ -98,6 +98,18 @@ public class Tabuleiro implements Cloneable {
         return (brancas == 0 || pretas == 0) || (dBranca == 1 && dPreta == 1 && brancas == 0 && pretas == 0);
     }
 
+    public boolean veririficarAfogamento(Tabuleiro tabuleiro, boolean turno){
+
+        ArrayList<Jogada> jogadas =  getMovimentosPossiveis(tabuleiro, turno);
+
+        if(jogadas.isEmpty()){
+            return true; //sem jogadas disponivieis para aquele turno
+        }
+        else{
+            return false;
+        }
+    }
+
     public ArrayList<Jogada> getMovimentosPossiveis(Tabuleiro clone, boolean turno) {
    
         ArrayList<Jogada> movimentos = new ArrayList<>();
@@ -149,11 +161,26 @@ public class Tabuleiro implements Cloneable {
                     if (posCol >= 0 && posCol <= 5 && posLin >= 0 && posLin <= 5){
 
                         Tabuleiro teste = clone.clone();
-                        if(teste.verificaMovimento(linha, coluna, posLin, posCol))
+                        if(teste.verificaMovimento(linha, coluna, posLin, posCol)){
+                            
+                            // 1. Efetiva o movimento no tabuleiro clonado da IA
+                            teste.getMatriz()[posLin][posCol] = teste.getMatriz()[linha][coluna];
+                            teste.getMatriz()[linha][coluna] = '0';
+
+                            // 2. Faz a promoção para dama no tabuleiro clonado
+                            if (teste.getMatriz()[posLin][posCol] == '2' && posLin == 5){
+                                teste.getMatriz()[posLin][posCol] = '4';
+                            }
+                            if (teste.getMatriz()[posLin][posCol] == '1' && posLin == 0){
+                                teste.getMatriz()[posLin][posCol] = '3';
+                            }
+                            
+                            //salva a jogada
                             movimentos.add(controle.new Jogada(
                             controle.new PosicaoReal(linha, coluna),
                             controle.new PosicaoReal(posLin, posCol), teste
-                        )); 
+                            )); 
+                    }
                     }
                 }
             }
@@ -180,11 +207,26 @@ public class Tabuleiro implements Cloneable {
                     if (posCol >= 0 && posCol <= 5 && posLin >= 0 && posLin <= 5){
 
                         Tabuleiro teste = clone.clone();
-                        if(teste.verificaMovimento(linha, coluna, posLin, posCol))
-                            movimentos.add(controle.new Jogada(
+                        if(teste.verificaMovimento(linha, coluna, posLin, posCol)) {
+                        
+                        // 1. Efetiva o movimento no tabuleiro clonado da IA
+                        teste.getMatriz()[posLin][posCol] = teste.getMatriz()[linha][coluna];
+                        teste.getMatriz()[linha][coluna] = '0';
+
+                        // 2. Faz a promoção para dama no tabuleiro clonado (se aplicável)
+                        if (teste.getMatriz()[posLin][posCol] == '2' && posLin == 5) {
+                            teste.getMatriz()[posLin][posCol] = '4';
+                        }
+                        if (teste.getMatriz()[posLin][posCol] == '1' && posLin == 0) {
+                            teste.getMatriz()[posLin][posCol] = '3';
+                        }
+
+                        // 3. Salva a jogada com o tabuleiro no estado futuro real
+                        movimentos.add(controle.new Jogada(
                             controle.new PosicaoReal(linha, coluna),
                             controle.new PosicaoReal(posLin, posCol), teste
                         )); 
+                    }
                     }
                 }
             }

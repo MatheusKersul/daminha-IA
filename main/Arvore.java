@@ -41,8 +41,10 @@ public class Arvore{
 
             
         ArrayList<Jogada> jogadasPossiveis = tabuleiro.getMovimentosPossiveis(tabuleiro, turno);
+        
         if (jogadasPossiveis.isEmpty()){
             int valor = estadoTabuleiro(no.getMatrix(), IA);
+            no.setMinMax(valor);
             return valor;
         }
 
@@ -67,7 +69,6 @@ public class Arvore{
             no.addChild(filho);
 
             int valorFilho =  montarArvoreIA(filho, jogada.getTabuleiro(), profundidade - 1, proximoTurno);
-            filho.setMinMax(valorFilho);
             if(maximizando){
 
                 if(valorFilho > melhorValor){   //que começa como minimo se estiver maximizando
@@ -115,7 +116,7 @@ public class Arvore{
                 char casa = matriz[i][j];
                 if (casa == '1'){ 
                     brancas++;
-                    posicaoBrancas += 10 + i;
+                    posicaoBrancas += 5 - i;
                 }
                 if (casa == '3'){
                     brancas++;
@@ -123,7 +124,7 @@ public class Arvore{
                 }
                 if (casa == '2'){ 
                     pretas++;
-                    posicaoPretas += 10 - i;
+                    posicaoPretas += 5 + i;
                 }
                 if (casa == '4'){
                     pretas++;
@@ -152,9 +153,9 @@ public class Arvore{
             posJogador = posicaoBrancas;
         }
 
-        int estado = (pecasIA - pecasJogador) * 20;
-        estado += (damasIA - damasJogador) * 40;
-        estado += (posIA - posJogador); 
+        int estado = (pecasIA - pecasJogador) * 100;
+        estado += (damasIA - damasJogador) * 200;
+        estado += (posIA - posJogador) * 3; 
 
         return estado;
     }

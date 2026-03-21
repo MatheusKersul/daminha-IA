@@ -1,4 +1,3 @@
 # Damas-IA
 
-
-Todos os caminhos são gerados e avaliados, porém a escolha do melhor node precisa ser atualizada
+Jogada das IAs implementadas e adições na interface gráfica. Ultimo passo é implementar a estratégia de poda alpha/beta 
