@@ -17,6 +17,7 @@ public final class MainInterfaceGrafica extends JFrame {
     private char caracterCasa = 'A'; 
     private int linhaOrigem = -1, colOrigem = -1;
     private int profundidade = 5;
+    private int empate = 1;
     private boolean poda = true;
     private boolean corIA;
 
@@ -288,6 +289,17 @@ public final class MainInterfaceGrafica extends JFrame {
                 this.dispose();
                 return true;
 
+            }
+            else if(tabuleiroLogico.verificarEmpate()){
+
+                if(empate == 0){
+
+                    JOptionPane.showMessageDialog(this, "Empate!! Somente duas damas no tabuleiro", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispose();
+                    return true;
+                }
+                else
+                    empate--;
             }
 
             return true;

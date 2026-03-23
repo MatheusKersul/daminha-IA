@@ -110,6 +110,22 @@ public class Tabuleiro implements Cloneable {
         }
     }
 
+    public boolean verificarEmpate(){
+
+        int brancas = 0, pretas = 0;
+        int dBranca = 0, dPreta = 0;
+        for (char[] linha : matriz){
+            for (char casa : linha) {
+                if (casa == '1') brancas++;
+                if (casa == '3') dBranca++;
+                if (casa == '2') pretas++;
+                if (casa == '4') dPreta++;
+            }
+        }
+
+        return ((dBranca == 1 && dPreta == 1) && (brancas == 0 && pretas == 0));
+    }
+
     public ArrayList<Jogada> getMovimentosPossiveis(Tabuleiro clone, boolean turno) {
    
         ArrayList<Jogada> movimentos = new ArrayList<>();
