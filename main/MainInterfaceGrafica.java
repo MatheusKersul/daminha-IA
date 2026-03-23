@@ -16,123 +16,136 @@ public final class MainInterfaceGrafica extends JFrame {
     private final Tabuleiro tabuleiroLogico;
     private char caracterCasa = 'A'; 
     private int linhaOrigem = -1, colOrigem = -1;
-    private int profundidade = 8;
+    private int profundidade = 5;
+    private boolean poda = true;
     private boolean corIA;
 
-private JLabel labelNos;
-private JLabel labelMinMax;
-private JLabel labelJogada;
-private JSlider sliderDificuldade;
-private JLabel labelDificuldade;
+    private JLabel labelNos;
+    private JLabel labelMinMax;
+    private JLabel labelJogada;
+    private JSlider sliderDificuldade;
+    private JLabel labelDificuldade;
 
-public MainInterfaceGrafica() {
-    tabuleiroLogico = new Tabuleiro(controle);
-    setTitle("DISCIPLINA - IA - MINI JOGO DE DAMA");
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public MainInterfaceGrafica() {
+        tabuleiroLogico = new Tabuleiro(controle);
+        setTitle("DISCIPLINA - IA - MINI JOGO DE DAMA");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    // Layout principal: painel lateral + tabuleiro
-    setLayout(new BorderLayout());
+        // Layout principal: painel lateral + tabuleiro
+        setLayout(new BorderLayout());
 
-    // === PAINEL LATERAL ESQUERDO ===
-    JPanel painelLateral = new JPanel();
-    painelLateral.setLayout(new BoxLayout(painelLateral, BoxLayout.Y_AXIS));
-    painelLateral.setBackground(new Color(30, 30, 30));
-    painelLateral.setPreferredSize(new Dimension(180, 500));
-    painelLateral.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        // === PAINEL LATERAL ESQUERDO ===
+        JPanel painelLateral = new JPanel();
+        painelLateral.setLayout(new BoxLayout(painelLateral, BoxLayout.Y_AXIS));
+        painelLateral.setBackground(new Color(30, 30, 30));
+        painelLateral.setPreferredSize(new Dimension(180, 500));
+        painelLateral.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
 
-    // Título
-    JLabel titulo = new JLabel("IA - DAMA");
-    titulo.setForeground(new Color(220, 180, 80));
-    titulo.setFont(new Font("Monospaced", Font.BOLD, 16));
-    titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Título
+        JLabel titulo = new JLabel("IA - DAMA");
+        titulo.setForeground(new Color(220, 180, 80));
+        titulo.setFont(new Font("Monospaced", Font.BOLD, 16));
+        titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    // Separador
-    JSeparator sep1 = new JSeparator();
-    sep1.setForeground(new Color(80, 80, 80));
-    sep1.setMaximumSize(new Dimension(160, 2));
+        // Separador
+        JSeparator sep1 = new JSeparator();
+        sep1.setForeground(new Color(80, 80, 80));
+        sep1.setMaximumSize(new Dimension(160, 2));
 
-    // Dificuldade
-    JLabel lblDif = new JLabel("DIFICULDADE");
-    lblDif.setForeground(new Color(150, 150, 150));
-    lblDif.setFont(new Font("Monospaced", Font.PLAIN, 11));
-    lblDif.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Dificuldade
+        JLabel lblDif = new JLabel("DIFICULDADE");
+        lblDif.setForeground(new Color(150, 150, 150));
+        lblDif.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        lblDif.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    sliderDificuldade = new JSlider(1, 10, profundidade);
-    sliderDificuldade.setBackground(new Color(30, 30, 30));
-    sliderDificuldade.setForeground(new Color(220, 180, 80));
-    sliderDificuldade.setMaximumSize(new Dimension(160, 40));
-    sliderDificuldade.setAlignmentX(Component.LEFT_ALIGNMENT);
-    sliderDificuldade.addChangeListener(e -> {
-        if (!sliderDificuldade.getValueIsAdjusting()) {
-            profundidade = sliderDificuldade.getValue();
-            labelDificuldade.setText("Profundidade: " + profundidade);
-        }
-    });
+        sliderDificuldade = new JSlider(1, 15, profundidade);
+        sliderDificuldade.setBackground(new Color(30, 30, 30));
+        sliderDificuldade.setForeground(new Color(220, 180, 80));
+        sliderDificuldade.setMaximumSize(new Dimension(160, 40));
+        sliderDificuldade.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sliderDificuldade.addChangeListener(e -> {
+            if (!sliderDificuldade.getValueIsAdjusting()) {
+                profundidade = sliderDificuldade.getValue();
+                labelDificuldade.setText("Profundidade: " + profundidade);
+            }
+        });
 
-    labelDificuldade = new JLabel("Profundidade: " + profundidade);
-    labelDificuldade.setForeground(new Color(220, 180, 80));
-    labelDificuldade.setFont(new Font("Monospaced", Font.BOLD, 12));
-    labelDificuldade.setAlignmentX(Component.LEFT_ALIGNMENT);
+        labelDificuldade = new JLabel("Profundidade: " + profundidade);
+        labelDificuldade.setForeground(new Color(220, 180, 80));
+        labelDificuldade.setFont(new Font("Monospaced", Font.BOLD, 12));
+        labelDificuldade.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JCheckBox checkPoda = new JCheckBox("Habilitar Poda", poda);
+        checkPoda.setBackground(new Color(30, 30, 30));
+        checkPoda.setForeground(new Color(220, 180, 80));
+        checkPoda.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        checkPoda.setAlignmentX(Component.LEFT_ALIGNMENT);
+        checkPoda.setFocusPainted(false);
+        checkPoda.addActionListener(e -> {
+            poda = checkPoda.isSelected();
+        });
 
-    // Separador
-    JSeparator sep2 = new JSeparator();
-    sep2.setForeground(new Color(80, 80, 80));
-    sep2.setMaximumSize(new Dimension(160, 2));
+        // Separador
+        JSeparator sep2 = new JSeparator();
+        sep2.setForeground(new Color(80, 80, 80));
+        sep2.setMaximumSize(new Dimension(160, 2));
 
-    // Stats da IA
-    JLabel lblStats = new JLabel("ÚLTIMA JOGADA");
-    lblStats.setForeground(new Color(150, 150, 150));
-    lblStats.setFont(new Font("Monospaced", Font.PLAIN, 11));
-    lblStats.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Stats da IA
+        JLabel lblStats = new JLabel("ÚLTIMA JOGADA");
+        lblStats.setForeground(new Color(150, 150, 150));
+        lblStats.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        lblStats.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    labelNos = new JLabel("Nós: -");
-    labelNos.setForeground(Color.WHITE);
-    labelNos.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    labelNos.setAlignmentX(Component.LEFT_ALIGNMENT);
+        labelNos = new JLabel("Nós: -");
+        labelNos.setForeground(Color.WHITE);
+        labelNos.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        labelNos.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    labelMinMax = new JLabel("MinMax: -");
-    labelMinMax.setForeground(Color.WHITE);
-    labelMinMax.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    labelMinMax.setAlignmentX(Component.LEFT_ALIGNMENT);
+        labelMinMax = new JLabel("MinMax: -");
+        labelMinMax.setForeground(Color.WHITE);
+        labelMinMax.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        labelMinMax.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    labelJogada = new JLabel("<html>Jogada:<br>-</html>");
-    labelJogada.setForeground(new Color(100, 220, 100));
-    labelJogada.setFont(new Font("Monospaced", Font.BOLD, 12));
-    labelJogada.setAlignmentX(Component.LEFT_ALIGNMENT);
+        labelJogada = new JLabel("<html>Jogada:<br>-</html>");
+        labelJogada.setForeground(new Color(100, 220, 100));
+        labelJogada.setFont(new Font("Monospaced", Font.BOLD, 12));
+        labelJogada.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    // Monta o painel
-    painelLateral.add(titulo);
-    painelLateral.add(Box.createVerticalStrut(10));
-    painelLateral.add(sep1);
-    painelLateral.add(Box.createVerticalStrut(10));
-    painelLateral.add(lblDif);
-    painelLateral.add(Box.createVerticalStrut(5));
-    painelLateral.add(sliderDificuldade);
-    painelLateral.add(labelDificuldade);
-    painelLateral.add(Box.createVerticalStrut(15));
-    painelLateral.add(sep2);
-    painelLateral.add(Box.createVerticalStrut(10));
-    painelLateral.add(lblStats);
-    painelLateral.add(Box.createVerticalStrut(8));
-    painelLateral.add(labelNos);
-    painelLateral.add(Box.createVerticalStrut(4));
-    painelLateral.add(labelMinMax);
-    painelLateral.add(Box.createVerticalStrut(4));
-    painelLateral.add(labelJogada);
+        // Monta o painel
+        painelLateral.add(titulo);
+        painelLateral.add(Box.createVerticalStrut(10));
+        painelLateral.add(sep1);
+        painelLateral.add(Box.createVerticalStrut(10));
+        painelLateral.add(lblDif);
+        painelLateral.add(Box.createVerticalStrut(5));
+        painelLateral.add(sliderDificuldade);
+        painelLateral.add(labelDificuldade);
+        painelLateral.add(Box.createVerticalStrut(8));
+        painelLateral.add(checkPoda);  
+        painelLateral.add(Box.createVerticalStrut(15));
+        painelLateral.add(sep2);
+        painelLateral.add(Box.createVerticalStrut(10));
+        painelLateral.add(lblStats);
+        painelLateral.add(Box.createVerticalStrut(8));
+        painelLateral.add(labelNos);
+        painelLateral.add(Box.createVerticalStrut(4));
+        painelLateral.add(labelMinMax);
+        painelLateral.add(Box.createVerticalStrut(4));
+        painelLateral.add(labelJogada);
 
-    // Tabuleiro
-    JPanel painelTabuleiro = new JPanel(new GridLayout(TAMANHO, TAMANHO));
-    painelTabuleiro.setPreferredSize(new Dimension(500, 500));
+        // Tabuleiro
+        JPanel painelTabuleiro = new JPanel(new GridLayout(TAMANHO, TAMANHO));
+        painelTabuleiro.setPreferredSize(new Dimension(500, 500));
 
-    inicializarComponentes(painelTabuleiro);
+        inicializarComponentes(painelTabuleiro);
 
-    add(painelLateral, BorderLayout.WEST);
-    add(painelTabuleiro, BorderLayout.CENTER);
+        add(painelLateral, BorderLayout.WEST);
+        add(painelTabuleiro, BorderLayout.CENTER);
 
-    pack();
-    setVisible(true);
-    sincronizarInterface();
-}
+        pack();
+        setVisible(true);
+        sincronizarInterface();
+    }
+    
     private void setCorIA(){
 
         int aleatorio = (int)(Math.random() * 2);
@@ -147,8 +160,7 @@ public MainInterfaceGrafica() {
         }
     }
 
-    
-private void inicializarComponentes(JPanel painelTabuleiro) {
+    private void inicializarComponentes(JPanel painelTabuleiro) {
     setCorIA();
     for (int i = 0; i < TAMANHO; i++) {
         for (int j = 0; j < TAMANHO; j++) {
@@ -257,6 +269,7 @@ private void inicializarComponentes(JPanel painelTabuleiro) {
             }
 
             if (tabuleiroLogico.verificarFimPartida()){
+                sincronizarInterface();
                 int brancas = 0;
                 for (char[] linha : tabuleiroLogico.getMatriz())
                     for (char c : linha) {
@@ -296,21 +309,27 @@ private void inicializarComponentes(JPanel painelTabuleiro) {
         raiz.setMatrix(clone.getMatriz());
         raiz.setTurn(controle.turnoBranca);
         
-        arvore.montarArvoreIA(raiz, clone, profundidade, controle.turnoBranca);
+        if(poda)
+            arvore.montarArvoreIA(raiz, clone, profundidade, controle.turnoBranca, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        else
+            arvore.montarArvoreIA(raiz, clone, profundidade, controle.turnoBranca);
+
         long nos = arvore.contarNos(raiz);
-labelNos.setText("Nós: " + nos);
-labelMinMax.setText("MinMax: " + arvore.getMelhorMinMax());
-        System.out.println("melhor node diretamente da arvore é: " + arvore.getMelhorMinMax());
+        labelNos.setText("Nós: " + nos);
+        labelMinMax.setText("MinMax: " + arvore.getMelhorMinMax());
 
         Node melhorJogada = arvore.getMelhorFilho();
         System.out.println("O melhor Node é: " + melhorJogada.getMinMax());
         boolean sucesso;
         PosicaoReal origem = controle.decodificarCasa(melhorJogada.getOrigin());
         PosicaoReal fim = controle.decodificarCasa(melhorJogada.getDest());
+
+
         labelJogada.setText("<html>Jogada:<br>[" + origem.linha + ", " + origem.coluna + "]" +
                     "<br>para<br>[" + fim.linha + ", " + fim.coluna + "]</html>");
+
+
         sucesso = moverPecaLogica(origem.linha, origem.coluna, fim.linha, fim.coluna);
-        System.out.println("A jogada da ia será: [" + origem.linha + ", " + origem.coluna + "] até: [" + fim.linha + ", " + fim.coluna + "]");
 
         if(sucesso){
             sincronizarInterface();

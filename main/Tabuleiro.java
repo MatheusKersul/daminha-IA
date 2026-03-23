@@ -94,8 +94,8 @@ public class Tabuleiro implements Cloneable {
             }
         }
         
-        
-        return (brancas == 0 || pretas == 0) || (dBranca == 1 && dPreta == 1 && brancas == 0 && pretas == 0);
+        // VERIFICAÇÃO PARA O JOGO SER INTERROMPIDO POR CAUSA DAS DAMAS  || (dBranca == 1 && dPreta == 1 && (brancas == 0 && pretas == 0)
+        return ((brancas == 0 && dBranca == 0) || (pretas == 0 && dPreta ==0));
     }
 
     public boolean veririficarAfogamento(Tabuleiro tabuleiro, boolean turno){

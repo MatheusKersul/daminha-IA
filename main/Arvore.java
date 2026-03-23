@@ -30,6 +30,82 @@ public class Arvore{
         return IA;
     }
 
+    public int montarArvoreIA(Node no, Tabuleiro tabuleiro, int profundidade, boolean turno, int alpha, int beta){
+
+        if (profundidade <= 0){
+
+            int valor = estadoTabuleiro(no.getMatrix(), IA);
+            no.setMinMax(valor);
+            return valor;
+        }
+
+            
+        ArrayList<Jogada> jogadasPossiveis = tabuleiro.getMovimentosPossiveis(tabuleiro, turno);
+        
+        if (jogadasPossiveis.isEmpty()){
+            int valor = estadoTabuleiro(no.getMatrix(), IA);
+            no.setMinMax(valor);
+            return valor;
+        }
+
+        boolean maximizando = (turno == IA);
+
+        //se for o turno da ia, ela tenta maximizar a jogada, senão ela tenta minimizar.
+        //qualquer valor de inicio será melhor que o minvalue, então ele servirá como comparação
+        int melhorValor = maximizando ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        Node melhorFilhoLocal = null;
+
+        for (Jogada jogada : jogadasPossiveis){
+
+            Node filho = new Node();
+            filho.setPai(no);
+            filho.setOrigin(jogada.getOrigin());
+            filho.setDest(jogada.getDest());
+            filho.setMatrix(jogada.getTabuleiro().getMatriz());
+            filho.setTurn(turno);
+
+            boolean proximoTurno = jogada.getTabuleiro().isLocked() ? turno : !turno;
+            filho.setNextTurn(proximoTurno);
+            no.addChild(filho);
+
+            int valorFilho =  montarArvoreIA(filho, jogada.getTabuleiro(), profundidade - 1, proximoTurno, alpha, beta);
+            filho.setMinMax(valorFilho);
+            if(maximizando){
+
+                if(valorFilho > melhorValor){   //que começa como minimo se estiver maximizando
+
+                    melhorValor = valorFilho;
+                    melhorFilhoLocal = filho;
+                    alpha = Math.max(alpha, valorFilho);
+                    if(beta <= alpha)
+                        break;
+
+                }
+            }
+            else{
+
+                if(valorFilho < melhorValor){
+
+                    melhorValor = valorFilho;
+                    melhorFilhoLocal = filho;
+                    beta = Math.min(beta, valorFilho);
+                    if(beta <= alpha)
+                        break;
+
+                }
+            }
+        }
+        no.setMinMax(melhorValor);
+        
+        if (no.getPai() == null && melhorFilhoLocal != null){
+            this.melhorFilho = melhorFilhoLocal;
+            this.melhorMinMax = melhorValor;
+        }
+
+        return melhorValor;
+           
+    }
+
     public int montarArvoreIA(Node no, Tabuleiro tabuleiro, int profundidade, boolean turno){
 
         if (profundidade <= 0){
