@@ -141,6 +141,8 @@ public class Arvore{
             filho.setTurn(turno);
 
             boolean proximoTurno = jogada.getTabuleiro().isLocked() ? turno : !turno;
+            if(jogada.getTabuleiro().isLocked())
+                profundidade += 1;
             filho.setNextTurn(proximoTurno);
             no.addChild(filho);
 
@@ -184,6 +186,7 @@ public class Arvore{
     
     private int estadoTabuleiro(char[][] matriz, boolean IA){
 
+        //métodos que são levados em contas para a definição do minmax: quantidade de peças normais; quantidade de damas; posição dentro do tabuleiro
         int brancas = 0, pretas = 0, damasBrancas = 0, damasPretas = 0;
         int posicaoBrancas = 0, posicaoPretas = 0;
         

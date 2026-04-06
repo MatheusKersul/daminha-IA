@@ -5,9 +5,7 @@ import main.Control.PosicaoReal;
 import java.awt.*;
 import java.util.ArrayList;
 import main.Control.Jogada;
-/**
- * @author Matheus
- */
+
 public final class MainInterfaceGrafica extends JFrame {
 
     private final int TAMANHO = 6;
@@ -16,10 +14,11 @@ public final class MainInterfaceGrafica extends JFrame {
     private final Tabuleiro tabuleiroLogico;
     private char caracterCasa = 'A'; 
     private int linhaOrigem = -1, colOrigem = -1;
-    private int profundidade = 5;
+    private int profundidade = 10;
     private int empate = 1;
-    private boolean poda = true;
+    private boolean poda = false;
     private boolean corIA;
+    private int opcaoIA;
 
     private JLabel labelNos;
     private JLabel labelMinMax;
@@ -28,6 +27,9 @@ public final class MainInterfaceGrafica extends JFrame {
     private JLabel labelDificuldade;
 
     public MainInterfaceGrafica() {
+
+        opcaoIA = JOptionPane.showConfirmDialog(null, "A IA será a peça branca?", "escolha a IA", JOptionPane.YES_NO_OPTION);
+       
         tabuleiroLogico = new Tabuleiro(controle);
         setTitle("DISCIPLINA - IA - MINI JOGO DE DAMA");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -162,7 +164,15 @@ public final class MainInterfaceGrafica extends JFrame {
     }
 
     private void inicializarComponentes(JPanel painelTabuleiro) {
-    setCorIA();
+
+    if(opcaoIA == 0)
+        corIA = true;
+    
+    else if(opcaoIA == 1)
+        corIA = false;
+    
+    else
+        setCorIA();
     for (int i = 0; i < TAMANHO; i++) {
         for (int j = 0; j < TAMANHO; j++) {
             tabuleiroInterface[i][j] = new CasaBotao();
@@ -270,6 +280,7 @@ public final class MainInterfaceGrafica extends JFrame {
             }
 
             if (tabuleiroLogico.verificarFimPartida()){
+
                 sincronizarInterface();
                 int brancas = 0;
                 for (char[] linha : tabuleiroLogico.getMatriz())
@@ -282,13 +293,18 @@ public final class MainInterfaceGrafica extends JFrame {
                 this.dispose();
                 return true;
             }
+            
             else if(tabuleiroLogico.veririficarAfogamento(tabuleiroLogico, controle.turnoBranca)){
 
-                String msg = (controle.turnoBranca) ? "Vitória das pretas!" : "Vitória das brancas!";
-                JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
-                this.dispose();
-                return true;
+                    if(empate == 0){
 
+                        String msg = (controle.turnoBranca) ? "Vitória das pretas!" : "Vitória das brancas!";
+                        JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+                        this.dispose();
+                        return true;
+                    }
+                    else
+                        empate--;
             }
             else if(tabuleiroLogico.verificarEmpate()){
 
@@ -312,7 +328,6 @@ public final class MainInterfaceGrafica extends JFrame {
         boolean vezIA = (controle.turnoBranca && corIA) || (!controle.turnoBranca && !corIA);
         if (!vezIA) return;   
 
-        //long inicio = System.currentTimeMillis();
         Node raiz = new Node();
         Arvore arvore = new Arvore();
         Tabuleiro clone = tabuleiroLogico.clone();
@@ -328,10 +343,14 @@ public final class MainInterfaceGrafica extends JFrame {
 
         long nos = arvore.contarNos(raiz);
         labelNos.setText("Nós: " + nos);
-        labelMinMax.setText("MinMax: " + arvore.getMelhorMinMax());
+        int melhorminmax = arvore.getMelhorMinMax();
+
+        if (melhorminmax < 0 )
+            labelMinMax.setText("MinMax: " + -arvore.getMelhorMinMax());
+        else
+            labelMinMax.setText("MinMax: " + arvore.getMelhorMinMax());
 
         Node melhorJogada = arvore.getMelhorFilho();
-        System.out.println("O melhor Node é: " + melhorJogada.getMinMax());
         boolean sucesso;
         PosicaoReal origem = controle.decodificarCasa(melhorJogada.getOrigin());
         PosicaoReal fim = controle.decodificarCasa(melhorJogada.getDest());
@@ -350,7 +369,7 @@ public final class MainInterfaceGrafica extends JFrame {
                 fazerJogadaIA();
         }
     }
-
+ 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(MainInterfaceGrafica::new);
     }
