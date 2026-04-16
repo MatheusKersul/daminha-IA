@@ -8,6 +8,7 @@ public class Arvore{
     boolean IA;
     int melhorMinMax;
     Node melhorFilho;
+    int totalNos = 0;
 
     public void setIA(boolean IA){
 
@@ -54,6 +55,7 @@ public class Arvore{
         //qualquer valor de inicio será melhor que o minvalue, então ele servirá como comparação
         int melhorValor = maximizando ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         Node melhorFilhoLocal = null;
+        totalNos++;
 
         for (Jogada jogada : jogadasPossiveis){
 
@@ -130,6 +132,7 @@ public class Arvore{
         //qualquer valor de inicio será melhor que o minvalue, então ele servirá como comparação
         int melhorValor = maximizando ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         Node melhorFilhoLocal = null;
+        totalNos++;
 
         for (Jogada jogada : jogadasPossiveis){
 
@@ -239,11 +242,8 @@ public class Arvore{
         return estado;
     }
 
-    public int contarNos(Node no) {
-        int total = 1;
-        for (Node filho : no.getChild()) {
-            total += contarNos(filho);
-        }
-        return total;
+    public int getTotalNos(){
+
+        return totalNos;
     }
 }

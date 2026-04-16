@@ -28,7 +28,8 @@ public final class MainInterfaceGrafica extends JFrame {
 
     public MainInterfaceGrafica() {
 
-        opcaoIA = JOptionPane.showConfirmDialog(null, "A IA será a peça branca?", "escolha a IA", JOptionPane.YES_NO_OPTION);
+        String[] opcoes = {"branca", "preta"};
+        opcaoIA = JOptionPane.showOptionDialog(null, "A IA será qual peça?", "Escolha da IA", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, opcoes, null);
        
         tabuleiroLogico = new Tabuleiro(controle);
         setTitle("DISCIPLINA - IA - MINI JOGO DE DAMA");
@@ -152,15 +153,11 @@ public final class MainInterfaceGrafica extends JFrame {
     private void setCorIA(){
 
         int aleatorio = (int)(Math.random() * 2);
-
-        if(aleatorio == 0){
-
+        
+        if(aleatorio == 0)
             corIA = true;
-        }
-        else{
-
+        else
             corIA = false;
-        }
     }
 
     private void inicializarComponentes(JPanel painelTabuleiro) {
@@ -341,7 +338,7 @@ public final class MainInterfaceGrafica extends JFrame {
         else
             arvore.montarArvoreIA(raiz, clone, profundidade, controle.turnoBranca);
 
-        long nos = arvore.contarNos(raiz);
+        long nos = arvore.getTotalNos();
         labelNos.setText("Nós: " + nos);
         int melhorminmax = arvore.getMelhorMinMax();
 
