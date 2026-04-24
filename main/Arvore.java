@@ -144,8 +144,10 @@ public class Arvore{
             filho.setTurn(turno);
 
             boolean proximoTurno = jogada.getTabuleiro().isLocked() ? turno : !turno;
+
             if(jogada.getTabuleiro().isLocked())
                 profundidade += 1;
+            
             filho.setNextTurn(proximoTurno);
             no.addChild(filho);
 

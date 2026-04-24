@@ -14,6 +14,7 @@ public class Control {
 
     HashMap<Character, PosicaoReal> decodificador = new HashMap<>();
     HashMap<PosicaoReal, Character> codificador = new HashMap<>();
+    
     public void setarCasas(char c, int linha, int coluna){
 
         decodificador.put(c, new PosicaoReal(linha, coluna));
@@ -24,7 +25,6 @@ public class Control {
 
         codificador.put(new PosicaoReal(linha, coluna), c);
     }
-   
     /*
     *   recebe como parametro a localização dentro da matriz
     *   devolve o char que indica a casa do tabuleiro  
@@ -41,9 +41,7 @@ public class Control {
 
         return decodificador.get(casa);
     }
-
-    /*
-        recebe o char que representa a casa
+    /*        recebe o char que representa a casa
         devolve a posição dentro da matriz
     */
     public PosicaoReal getEnderecoCasa(char key){

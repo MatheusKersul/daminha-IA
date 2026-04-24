@@ -62,7 +62,7 @@ public final class MainInterfaceGrafica extends JFrame {
         lblDif.setFont(new Font("Monospaced", Font.PLAIN, 11));
         lblDif.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        sliderDificuldade = new JSlider(1, 15, profundidade);
+        sliderDificuldade = new JSlider(0, 15, profundidade);
         sliderDificuldade.setBackground(new Color(30, 30, 30));
         sliderDificuldade.setForeground(new Color(220, 180, 80));
         sliderDificuldade.setMaximumSize(new Dimension(160, 40));
@@ -207,9 +207,27 @@ public final class MainInterfaceGrafica extends JFrame {
         // Caso 2: Já existe uma peça selecionada, tentando mover
         else {
             
-            if (linhaOrigem == linha && colOrigem == col) {
+            if (linhaOrigem == linha && colOrigem == col){
                 cancelarSelecao(linhaOrigem, colOrigem);
                 return;
+            }
+
+            if (profundidade > 10 && !poda){
+
+                int resposta = JOptionPane.showConfirmDialog(
+                        this,
+                        "A profundidade está acima de 10 e a Poda Alpha-Beta está desabilitada.\n"
+                        + "O cálculo da IA pode demorar muito tempo e travar a tela. Deseja continuar?",
+                        "Aviso de Desempenho",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+
+                if (resposta != JOptionPane.YES_OPTION){
+
+                        cancelarSelecao(linhaOrigem, colOrigem);
+                    return; 
+                }
             }
 
             boolean sucesso = moverPecaLogica(linhaOrigem, colOrigem, linha, col);
@@ -325,6 +343,27 @@ public final class MainInterfaceGrafica extends JFrame {
         boolean vezIA = (controle.turnoBranca && corIA) || (!controle.turnoBranca && !corIA);
         if (!vezIA) return;   
 
+        if(profundidade == 0){
+            Tabuleiro clone = tabuleiroLogico.clone();
+            ArrayList<Jogada> jogadas = clone.getMovimentosPossiveis(clone, vezIA);
+
+            if (jogadas.isEmpty())
+                return;
+        
+
+            Jogada aleatoria = jogadas.get((int)Math.random() * jogadas.size());
+            PosicaoReal origem = controle.decodificarCasa(aleatoria.getOrigin());
+            PosicaoReal fim = controle.decodificarCasa(aleatoria.getDest()); 
+            boolean sucesso = moverPecaLogica(origem.linha, origem.coluna, fim.linha, fim.coluna);
+
+            if (sucesso){
+                sincronizarInterface();
+                if (tabuleiroLogico.isLocked())
+                    fazerJogadaIA();
+            }
+            return;
+        }
+
         Node raiz = new Node();
         Arvore arvore = new Arvore();
         Tabuleiro clone = tabuleiroLogico.clone();
@@ -366,7 +405,7 @@ public final class MainInterfaceGrafica extends JFrame {
                 fazerJogadaIA();
         }
     }
- 
+  
     public static void main(String[] args) {
         SwingUtilities.invokeLater(MainInterfaceGrafica::new);
     }
